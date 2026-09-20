@@ -333,43 +333,4 @@ No. Changing the replica count changes the scale of the current revision. A new 
 
 It changes the Pod template back to a previous revision recorded in Deployment history, then performs another rollout to that template.
 
-### What is the difference between a Deployment and a ReplicaSet?
 
-A ReplicaSet only maintains the desired number of matching Pods. A Deployment manages ReplicaSets and adds controlled updates, rollout history, and rollback.
-
-### What is the default Deployment update strategy?
-
-`RollingUpdate` is the default. It replaces Pods gradually. `Recreate` removes all old Pods before creating new ones and can cause downtime.
-
-### Does a Deployment expose Pods outside the cluster?
-
-No. A Deployment manages Pods but does not provide a stable network endpoint. A Service is used for stable networking and load balancing.
-
-### What is the purpose of a readiness probe?
-
-It tells Kubernetes whether a Pod is ready to receive traffic. A failed readiness probe removes the Pod from Service endpoints without necessarily restarting the container.
-
-### What is the difference between `kubectl apply` and `kubectl create`?
-
-`kubectl create` creates a resource and fails if it already exists. `kubectl apply` creates or updates a resource to match the declarative configuration and is commonly used with manifests stored in Git.
-
-### Can a Deployment manage a Stateful application?
-
-It can run the containers, but it does not provide stable per-replica identity or ordered storage behavior. Stateful applications commonly require a StatefulSet instead.
-
-### What happens if a Deployment Pod is deleted?
-
-The ReplicaSet managed by the Deployment notices that the actual count is below the desired count and creates a replacement Pod.
-
-### What is the purpose of `maxUnavailable` and `maxSurge`?
-
-They control how many Pods may be unavailable and how many extra Pods may exist during a rolling update. Together they balance availability and rollout speed.
-
-## Key takeaways
-
-- Use a Deployment for most stateless application workloads.
-- A Deployment manages ReplicaSets, and ReplicaSets manage Pods.
-- Changing the Pod template creates a new rollout revision.
-- Use `kubectl rollout status` to verify progress and `kubectl rollout undo` to recover from a bad release.
-- A Deployment provides workload management, not stable networking; use a Service for that.
-- Production Deployments should use versioned images, health probes, resource settings, security controls, and an availability-aware rollout strategy.
